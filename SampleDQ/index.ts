@@ -3,11 +3,24 @@ import DataSetInterfaces = ComponentFramework.PropertyHelper.DataSetApi;
 type DataSet = ComponentFramework.PropertyTypes.DataSet;
 import * as React from "react";
 import MyComponent from "./MyComponent";
-import { render } from "react-dom";
 
 export class SampleDQ
-  implements ComponentFramework.StandardControl<IInputs, IOutputs>
+  implements ComponentFramework.ReactControl<IInputs, IOutputs>
 {
+  // Reference to ComponentFramework Context object
+  private _context: ComponentFramework.Context<IInputs>;
+
+  // Reference to the control container HTMLDivElement
+  // This element contains all elements of our custom control example
+  private _container: HTMLDivElement;
+
+  // This element refers to the count of line items
+  private _itemsNumber: number = 0;
+
+  private notifyOutputChanged: () => void;
+
+  private _theComponent = MyComponent;
+
   /**
    * Empty constructor.
    */
@@ -24,22 +37,24 @@ export class SampleDQ
   public init(
     context: ComponentFramework.Context<IInputs>,
     notifyOutputChanged: () => void,
-    state: ComponentFramework.Dictionary,
-    container: HTMLDivElement
+    state: ComponentFramework.Dictionary
   ): void {
+    this._context = context;
+    this._context.mode.trackContainerResize(true);
+    this.notifyOutputChanged = notifyOutputChanged;
+
     context.webAPI
-      .retrieveMultipleRecords("cr56f_InspectionFormLineItem")
+      .retrieveMultipleRecords("cr56f_inspectionformlineitem")
       .then((response: ComponentFramework.WebApi.RetrieveMultipleResponse) => {
         // Retrieve Multiple Web API call completed successfully
         let count1 = 0;
         for (const entity of response.entities) {
           count1++;
         }
-        const el = React.createElement(MyComponent, { value: count1 });
-        render(el, container);
-      }).catch(()=> {
-        const el = React.createElement(MyComponent, { value: "n/a" });
-        render(el, container);
+        this._itemsNumber = count1;
+      })
+      .catch(() => {
+        this._itemsNumber = 99;
       });
   }
 
@@ -47,8 +62,11 @@ export class SampleDQ
    * Called when any value in the property bag has changed. This includes field values, data-sets, global values such as container height and width, offline status, control metadata values such as label, visible, etc.
    * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to names defined in the manifest, as well as utility functions
    */
-  public updateView(context: ComponentFramework.Context<IInputs>): void {
+  public updateView(
+    context: ComponentFramework.Context<IInputs>
+  ): React.ReactElement {
     // Add code to update control view
+    return React.createElement(this._theComponent, { value: this._itemsNumber });
   }
 
   /**
