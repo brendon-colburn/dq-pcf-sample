@@ -10,6 +10,7 @@
     "refreshTypes": "pcf-scripts refreshTypes"
   },
   "dependencies": {
+    "@fluentui/react": "^8.72.3"
   },
   "devDependencies": {
     "@types/node": "^16.4",
