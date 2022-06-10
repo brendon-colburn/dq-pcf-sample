@@ -1,5 +1,11 @@
 import { Label } from "@fluentui/react";
 import * as React from "react";
 
-const MyComponent = (props: any) => <Label>Record Count: {props.value}</Label>
-export default MyComponent
+export interface ILineItems {
+    value: string | number
+}
+
+export const MyComponent = React.memo(({ value }: ILineItems): JSX.Element => {
+    return (<p>Record Count: {value}</p>)
+})
+

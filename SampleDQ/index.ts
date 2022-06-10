@@ -2,7 +2,7 @@ import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import DataSetInterfaces = ComponentFramework.PropertyHelper.DataSetApi;
 type DataSet = ComponentFramework.PropertyTypes.DataSet;
 import * as React from "react";
-import MyComponent from "./MyComponent";
+import { MyComponent, ILineItems } from "./MyComponent";
 
 export class SampleDQ
   implements ComponentFramework.ReactControl<IInputs, IOutputs>
@@ -10,16 +10,10 @@ export class SampleDQ
   // Reference to ComponentFramework Context object
   private _context: ComponentFramework.Context<IInputs>;
 
-  // Reference to the control container HTMLDivElement
-  // This element contains all elements of our custom control example
-  private _container: HTMLDivElement;
-
   // This element refers to the count of line items
   private _itemsNumber: number = 0;
 
   private notifyOutputChanged: () => void;
-
-  private _theComponent = MyComponent;
 
   /**
    * Empty constructor.
@@ -65,8 +59,11 @@ export class SampleDQ
   public updateView(
     context: ComponentFramework.Context<IInputs>
   ): React.ReactElement {
+    const props: ILineItems = {
+      value: this._itemsNumber,
+    };
     // Add code to update control view
-    return React.createElement(this._theComponent, { value: this._itemsNumber });
+    return React.createElement(MyComponent, props);
   }
 
   /**
