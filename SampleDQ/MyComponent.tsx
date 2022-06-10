@@ -6,6 +6,6 @@ export interface ILineItems {
 }
 
 export const MyComponent = React.memo(({ value }: ILineItems): JSX.Element => {
-    return (<p>Record Count: {value}</p>)
+    return (<Label>Record Count: {value}</Label>)
 })
 
