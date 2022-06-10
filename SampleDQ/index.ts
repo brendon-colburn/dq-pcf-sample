@@ -13,7 +13,11 @@ export class SampleDQ
   // This element refers to the count of line items
   private _itemsNumber: number = 0;
 
+  private _label: string = "1. Test Question"
+
   private notifyOutputChanged: () => void;
+
+  private _response: ComponentFramework.WebApi.RetrieveMultipleResponse | null = null;
 
   /**
    * Empty constructor.
@@ -42,13 +46,19 @@ export class SampleDQ
       .then((response: ComponentFramework.WebApi.RetrieveMultipleResponse) => {
         // Retrieve Multiple Web API call completed successfully
         let count1 = 0;
+        let myLabel = "";
         for (const entity of response.entities) {
           count1++;
+          myLabel = entity["cr56f_linetext"]
         }
         this._itemsNumber = count1;
+        this._label = myLabel;
+        this._response = response;
       })
       .catch(() => {
         this._itemsNumber = 99;
+        this._label = "Didn't return items"
+        this._response = null
       });
   }
 
@@ -59,8 +69,10 @@ export class SampleDQ
   public updateView(
     context: ComponentFramework.Context<IInputs>
   ): React.ReactElement {
-    const props: ILineItems = {
+    const props: any = {
       value: this._itemsNumber,
+      liLabel: this._label,
+      response: this._response
     };
     // Add code to update control view
     return React.createElement(MyComponent, props);
